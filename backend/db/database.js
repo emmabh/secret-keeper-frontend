@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('./config.json');
-var uri = 'mongodb+srv://' + config.db.username + ':' + config.db.pw + '@secretkeeper-ytgv2.mongodb.net/secretKeeper';
+var uri = 'mongodb+srv://' + process.env.DB_USERNAME + ':' + process.env.DB_PW + '@secretkeeper-ytgv2.mongodb.net/secretKeeper';
 
 
 class Database {
