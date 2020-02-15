@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+}
+
+.row {
+  height: 5em !important;
+  padding-bottom: 5em !important;
+  top: 2em !important;
+}
+
+@media (max-width: 640px) {
+  .row {
+    height: 2em !important;
+    padding-bottom: 2em !important;
+    top: 2em !important;
+  }
+
+}
