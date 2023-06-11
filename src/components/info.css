@@ -1,22 +1,31 @@
 .component-info {
-    position: relative;
+    position: fixed;
     text-align: right;
-    margin-left: 2em;
-    
+    padding: 0 2em;
+
+    width: 100%;
+
+    top: 15px;
+    left: 0;
+
+    display: flex; 
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 p {
     font-family: 'Poppins', sans-serif;
     font-size: 1.5em;
     color:   white !important;
+    margin: 0;
+    margin-bottom: 0 !important;
 }
 
 .component-infoText {
+    position: relative;
     font-family: 'Poppins', sans-serif;
     font-size: 1.5em;
     color: rgb(255, 255, 255);
-    top: 0.1em;
-    bottom: 0.1em;
 }
 
 @media (max-width: 640px) {
@@ -24,13 +33,13 @@ p {
         font-family: 'Poppins', sans-serif;
         font-size: 1em;
         color: rgb(255, 255, 255);
-        top: 0.1em;
-        bottom: 0.1em;
     }
 
     p {
         font-family: 'Poppins', sans-serif;
         font-size: 1em;
         color:   white !important;
+        margin: 0;
+        margin-bottom: 0;
     }
 }

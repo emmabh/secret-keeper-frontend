@@ -1,18 +1,14 @@
-.App {
-  text-align: center;
+.outer-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 }
 
-.row {
-  height: 5em !important;
-  padding-bottom: 5em !important;
-  top: 2em !important;
-}
-
-@media (max-width: 640px) {
-  .row {
-    height: 2em !important;
-    padding-bottom: 2em !important;
-    top: 2em !important;
-  }
-
+#root {
+  position: relative;
+  width: 100%;
+  height: calc(100 * var(--vh, 1vh));
 }

@@ -2,78 +2,125 @@ import React from 'react';
 import Info from './Info';
 import SecretEnter from "./SecretEnter";
 import ReturnedSecret from "./ReturnedSecret";
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
 import "./App.css";
 import axios from 'axios';
 
-
+const API_URL = "https://jbc77qrkg1.execute-api.us-east-1.amazonaws.com/dev/secret"
 
 export default class App extends React.Component {
   //returnedSecret = null;
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       secret: null,
-      data: null
+      data: null,
+      loading: false,
     };
 
     this.onSubmit = this.onSubmit.bind(this);
+    this.onWindowResize = this.onWindowResize.bind(this);
+    this.registerBootlegVH = this.registerBootlegVH.bind(this);
+    this.tickUpdate = this.tickUpdate.bind(this);
 
   }
 
-  async onSubmit(secret){
+  componentDidMount() {
+    this.registerBootlegVH();
+  }
+
+  async onSubmit(secret) {
     //Makes an API call to add secret, and then follows up with a getSecret
-    try{
+    try {
+      this.setState({ loading: true })
       await addSecret(secret);
       const newSecret = await getSecret();
-
+      console.log(`ALLO ${newSecret}`)
       //Set the state
       this.setState({
-        secret: newSecret
+        secret: newSecret,
+        loading: false
       });
 
-    } catch (e){
+    } catch (e) {
       console.log("ERROR: " + e)
     }
-    
+
 
     return
   };
 
-  render(){
+  onWindowResize = cb => {
+    window.addEventListener("resize", cb, {
+      passive: true
+    });
+
+    window.addEventListener("orientationchange", cb, {
+      passive: true
+    });
+
+    return () => {
+      window.removeEventListener("resize", cb);
+      window.removeEventListener("orientationchange", cb);
+    };
+  };
+
+  registerBootlegVH = () => {
+    const setVh = () =>
+      document.documentElement.style.setProperty(
+        "--vh",
+        `${window.innerHeight / 100}px`
+      );
+
+    const cb = this.tickUpdate(() => {
+      setVh();
+    });
+
+    setVh();
+
+    return this.onWindowResize(cb);
+  };
+
+  tickUpdate = cb => {
+    let ticking = false;
+
+    const update = e => {
+      cb(e);
+      ticking = false;
+    };
+
+    const requestTick = e => {
+      if (!ticking) {
+        requestAnimationFrame(() => update(e));
+        ticking = true;
+      }
+    };
+
+    return requestTick;
+  };
+
+  render() {
     return (
-      <Container>
-        <Row>
-          <Col>
-            <Info />
-          </Col>
-        </Row>
-        <Row>
-          <Col> 
-            <SecretEnter clickHandler = {this.onSubmit}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <ReturnedSecret value = {this.state.secret}/>
-          </Col>
-        </Row>
-      </Container>
+      <div className="outer-container">
+        <Info />
+        <SecretEnter clickHandler={this.onSubmit} />
+        {(!this.state.loading) && <ReturnedSecret value={this.state.secret} />}
+        {(this.state.loading) &&
+          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+        }
+      </div>
     );
 
-  } 
+  }
 };
 
-function getSecret(){
+function getSecret() {
   return new Promise((resolve, reject) => {
-    axios.get(`https://afternoon-beach-20536.herokuapp.com/api/secrets`, { crossdomain: true })
+    axios.get(API_URL, { crossdomain: true })
       .then(res => {
-        if(res.data){
+        if (res.data) {
           console.log(res.data);
-          resolve(res.data[0]["secret"])
+          resolve(res.data.secret)
         }
       })
       .catch(err => {
@@ -83,20 +130,24 @@ function getSecret(){
   });
 }
 
-function addSecret(secret){
+function addSecret(secret) {
   return new Promise((resolve, reject) => {
-    axios.post(`https://afternoon-beach-20536.herokuapp.com/api/secrets/${secret}`)
-    .then(res => {
-      console.log(res.data)
-      if(res.data){
+    axios.post(API_URL,
+      {
+        secret
+      },
+    )
+      .then(res => {
         console.log(res.data)
-        resolve(res.data)
-      }
-    })
-    .catch(err => {
-      console.log(err)
-      reject(err)
-    })
+        if (res.data) {
+          console.log(res.data)
+          resolve(res.data)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        reject(err)
+      })
   })
 }
 
